@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ name }} - Recipe</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: #f4f6fb;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Floating r.jpg image on right side */
+      .side-image {
+        position: fixed;
+        top: 100px; /* space below navbar */
+        right: 20px;
+        max-width: 300px;
+        z-index: 0;
+        opacity: 0.95;
+      }
+
+      @media (max-width: 992px) {
+        .side-image {
+          display: none; /* hide image on smaller screens */
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg" 
+         style="background: linear-gradient(90deg, #6c63ff, #00c9a7);">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold text-white" href="#">🍳 Recipe Generator</a>
+        <button
+          class="navbar-toggler text-white"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Floating Recipe Image (outside container) -->
+    <img src="{{ url_for('static', filename='r.jpg') }}" alt="Recipe Image" class="side-image rounded shadow">
+
+    <!-- Recipe Content -->
+    <div class="container my-5 fade-in" style="max-width: 900px; position: relative; z-index: 1;">
+      <div class="card shadow-sm border-0" 
+           style="border-radius: 20px; background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);">
+        <div class="card-body">
+          <h2 class="card-title text-center fw-bold" style="color: #6c63ff;">
+            {{ name }}
+          </h2>
+          <p class="text-center text-muted">
+            <i class="fas fa-clock"></i> Total Time: {{ total_time }}
+          </p>
+          <hr />
+
+          <!-- Ingredients -->
+          <div class="mb-4">
+            <h4 class="fw-semibold" style="color:#00c9a7;">
+              <i class="fas fa-shopping-basket me-2"></i>Ingredients
+            </h4>
+            <ul class="list-group list-group-flush">
+              {% for ingredient in ingredients %}
+              <li class="list-group-item border-0">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                {{ ingredient }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- Instructions -->
+          <div class="mb-4">
+            <h4 class="fw-semibold" style="color:#ff9800;">
+              <i class="fas fa-utensils me-2"></i>Instructions
+            </h4>
+            <ol class="list-group list-group-numbered list-group-flush">
+              {% for step in steps %}
+              <li class="list-group-item border-0">{{ step }}</li>
+              {% endfor %}
+            </ol>
+          </div>
+
+          <!-- Nutrition -->
+          <div class="mb-4">
+            <h4 class="fw-semibold" style="color:#e91e63;">
+              <i class="fas fa-heartbeat me-2"></i>Nutritional Information
+            </h4>
+            {% if nutrition %}
+            <div class="row nutrition-info">
+              <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center">
+                    <i class="fas fa-fire-alt fa-2x text-warning mb-2"></i>
+                    <h5 class="card-title">Calories</h5>
+                    <p class="card-text">{{ nutrition.calories }} kcal</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center">
+                    <i class="fas fa-drumstick-bite fa-2x text-primary mb-2"></i>
+                    <h5 class="card-title">Protein</h5>
+                    <p class="card-text">{{ nutrition.protein }} g</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center">
+                    <i class="fas fa-cheese fa-2x text-warning mb-2"></i>
+                    <h5 class="card-title">Fat</h5>
+                    <p class="card-text">{{ nutrition.fat }} g</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center">
+                    <i class="fas fa-bread-slice fa-2x text-success mb-2"></i>
+                    <h5 class="card-title">Carbohydrates</h5>
+                    <p class="card-text">{{ nutrition.carbohydrates }} g</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <p>Nutritional information is unavailable.</p>
+            {% endif %}
+          </div>
+
+          <!-- Back Button -->
+          <div class="d-flex justify-content-center">
+            <a href="{{ url_for('index') }}" class="btn btn-lg px-4"
+               style="border-radius: 40px; background: linear-gradient(90deg, #6c63ff, #00c9a7); color:#fff; font-weight:600;">
+              <i class="fas fa-arrow-left me-2"></i>Back
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: linear-gradient(90deg, #6c63ff, #00c9a7); color: #fff;" 
+            class="text-center py-3 fw-medium">
+      © 2025 Recipe Generator | Made with ❤️
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+  </body>
+</html>
